@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import formatDuration from "../utils/formatDuration";
+import { formatDuration } from "../utils/formatDuration";
 import { formatTimeAgo } from "../utils/formatTimeAgo";
 
-interface Props {
+type VideoGridItemProps = {
   id: string;
   title: string;
   channel: {
@@ -15,13 +15,13 @@ interface Props {
   duration: number;
   thumbnailUrl: string;
   videoUrl: string;
-}
+};
 
 const VIEW_FORMATTER = new Intl.NumberFormat(undefined, {
   notation: "compact",
 });
 
-const VideoGridItem = ({
+export function VideoGridItem({
   id,
   title,
   channel,
@@ -30,7 +30,7 @@ const VideoGridItem = ({
   duration,
   thumbnailUrl,
   videoUrl,
-}: Props) => {
+}: VideoGridItemProps) {
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -44,6 +44,7 @@ const VideoGridItem = ({
       videoRef.current.pause();
     }
   }, [isVideoPlaying]);
+
   return (
     <div
       className="flex flex-col gap-2"
@@ -53,7 +54,7 @@ const VideoGridItem = ({
       <a href={`/watch?v=${id}`} className="relative aspect-video">
         <img
           src={thumbnailUrl}
-          className={`block w-full h-full object-cover transition-[border-radius] duration-200  ${
+          className={`block w-full h-full object-cover transition-[border-radius] duration-200 ${
             isVideoPlaying ? "rounded-none" : "rounded-xl"
           }`}
         />
@@ -61,13 +62,13 @@ const VideoGridItem = ({
           {formatDuration(duration)}
         </div>
         <video
+          className={`block h-full object-cover absolute inset-0 transition-opacity duration-200 ${
+            isVideoPlaying ? "opacity-100 delay-200" : "opacity-0"
+          }`}
           ref={videoRef}
           muted
           playsInline
           src={videoUrl}
-          className={`block h-full object-cover absolute inset-0 transition-opacity duration-200 ${
-            isVideoPlaying ? "opacity-100 delay-200" : "opacity-0"
-          }`}
         />
       </a>
       <div className="flex gap-2">
@@ -88,6 +89,4 @@ const VideoGridItem = ({
       </div>
     </div>
   );
-};
-
-export default VideoGridItem;
+}

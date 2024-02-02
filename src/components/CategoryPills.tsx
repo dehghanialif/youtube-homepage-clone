@@ -1,19 +1,23 @@
-import React, { useEffect, useRef, useState } from "react";
-import Button from "./Button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "./Button";
+import { useEffect, useRef, useState } from "react";
 
-interface Props {
+type CategoryPillProps = {
   categories: string[];
   selectedCategory: string;
   onSelect: (category: string) => void;
-}
+};
 
 const TRANSLATE_AMOUNT = 200;
 
-const CategoryPills = ({ categories, selectedCategory, onSelect }: Props) => {
+export function CategoryPills({
+  categories,
+  selectedCategory,
+  onSelect,
+}: CategoryPillProps) {
   const [translate, setTranslate] = useState(0);
-  const [isLeftVisible, setIsLeftVisible] = useState(true);
-  const [isRightVisible, setIsRightVisible] = useState(true);
+  const [isLeftVisible, setIsLeftVisible] = useState(false);
+  const [isRightVisible, setIsRightVisible] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -37,15 +41,15 @@ const CategoryPills = ({ categories, selectedCategory, onSelect }: Props) => {
   }, [categories, translate]);
 
   return (
-    <div className="overflow-x-hidden relative" ref={containerRef}>
+    <div ref={containerRef} className="overflow-x-hidden relative">
       <div
-        className="flex whitespace-no-wrap gap-3 transition-transform w-[max-content]"
+        className="flex whitespace-nowrap gap-3 transition-transform w-[max-content]"
         style={{ transform: `translateX(-${translate}px)` }}
       >
         {categories.map((category) => (
           <Button
-            onClick={() => onSelect(category)}
             key={category}
+            onClick={() => onSelect(category)}
             variant={selectedCategory === category ? "dark" : "default"}
             className="py-1 px-3 rounded-lg whitespace-nowrap"
           >
@@ -79,7 +83,9 @@ const CategoryPills = ({ categories, selectedCategory, onSelect }: Props) => {
             className="h-full aspect-square w-auto p-1.5"
             onClick={() => {
               setTranslate((translate) => {
-                if (containerRef.current == null) return translate;
+                if (containerRef.current == null) {
+                  return translate;
+                }
                 const newTranslate = translate + TRANSLATE_AMOUNT;
                 const edge = containerRef.current.scrollWidth;
                 const width = containerRef.current.clientWidth;
@@ -96,6 +102,4 @@ const CategoryPills = ({ categories, selectedCategory, onSelect }: Props) => {
       )}
     </div>
   );
-};
-
-export default CategoryPills;
+}
